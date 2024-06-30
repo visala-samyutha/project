@@ -11,6 +11,9 @@ function HomeComponent() {
   const navigate=useNavigate();
   const{setProductId}=useAuth();
   const [products, setProducts] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+
   useEffect(() => {
     fetchProductData();
   }, []);
@@ -22,6 +25,14 @@ function HomeComponent() {
         console.log(err);
       }
     };
+    const handleSearch=(e)=>{
+      setSearchQuery(e.target.value);
+      setCurrentPage(1);
+  
+    }
+    const filteredProducts = products.filter((product) =>
+      product.productName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
   //   const handleAddToCart = async (pid) => {
   //     try {
   //         const response = await axios.post(`http://localhost:3002/home/${id}/${pid}`);
@@ -49,8 +60,11 @@ function HomeComponent() {
     return(
        <>
        <OptionsComponent/>
+       <form className="col-12 col-lg-auto mb-2 mb-lg-0" role="search">
+         <input type="search" className="form-control" value={searchQuery} onChange={handleSearch} placeholder="Search..." aria-label="Search" />
+    </form>
         <Container style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '20px' }}>
-                {products.map((product) =>
+                {filteredProducts.map((product) =>
                     <Card className="product-card" key={product._id} style={{ width: '20rem' }}>
                         <Card.Img variant="top" src={product.imageUrl} style={{height:'250px',width:'20rem'}}/>
                         <Card.Body>

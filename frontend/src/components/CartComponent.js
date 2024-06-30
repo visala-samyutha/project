@@ -10,6 +10,8 @@ function CartComponent() {
   const [carts, setCarts] = useState([]);
   const [isCartEmpty, setIsCartEmpty] = useState(false);
   const userId=localStorage.getItem("userId");
+  if(userId===null) navigate('/login');
+  
 
   useEffect(() => {
     fetchCartData();

@@ -4,6 +4,8 @@ import axios from 'axios';
 import { Card, Container, Row, Col,Button } from 'react-bootstrap';
 import {useNavigate} from 'react-router-dom';
 import {useAuth} from './AuthProvider';
+import OptionsComponent from './OptionsComponent';
+import { toast, ToastContainer } from 'react-toastify';
 
 
 const HomeProductDetail = () => {
@@ -30,27 +32,40 @@ const HomeProductDetail = () => {
   if (!product) return <p>Loading...</p>;
   const handleAddToCart = async (pid) => {
     try {
+      if(uid===null){
+        alert("you must login");
+        navigate('/login')
+      }
         const response = await axios.post(`http://localhost:3002/home/${uid}/${pid}`);
         alert(response.data.message);
+        if(response.data.message==="Out of Stock") navigate('/home');
         //fetchProductData();
     } catch (error) {
         console.error("There was an error adding the product to the cart:", error);
-        alert("An error occurred while adding the product to the cart. Please try again.");
     }
 };
 const handlePlaceOrder = async (pid) => {
   try {
+    if(uid===null){
+      alert("you must login");
+      navigate('/login')
+    }
     const response = await axios.post(`http://localhost:3002/order/direct/${uid}/${pid}`);
     alert(response.data.message);
+    if(response.data.message==="Out of stock") navigate('/home');
+    else{
     setProductId(pid);
     //fetchProductData();
     navigate('/homeorder');
+    }
   } catch (error) {
-    alert(error);
+    console.log(error);
   }
 };
 
   return (
+    <>
+    <OptionsComponent/>
     <Container className="product-detail-container mt-5">
       <Row>
         <Col md={6}>
@@ -74,6 +89,7 @@ const handlePlaceOrder = async (pid) => {
         </Col>
       </Row>
     </Container>
+    </>
   );
 };
 

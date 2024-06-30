@@ -1,16 +1,19 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Row, Col, Card, CardBody} from 'react-bootstrap';
+import {useNavigate} from 'react-router-dom'
 
 function OrderComponent(){
     const [orders, setOrders] = useState([]);
     const [isOrderEmpty, setIsOrderEmpty] = useState(false);
+    const id=localStorage.getItem("userId");
+    const navigate=useNavigate();
+    if(id===null) navigate('/login');
     useEffect(() => {
       fetchOrders();
     }, []);
         const fetchOrders = async () => {
             try {
-                const id=localStorage.getItem("userId");
                 const response = await axios.get(`http://localhost:3002/order/${id}`);
                 const orderData=response.data.items||[];
                 setOrders(response.data.items);
